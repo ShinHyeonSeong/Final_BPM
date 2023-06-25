@@ -242,6 +242,14 @@ public class ProjectDetailSerivce {
         return userWorkDto;
     }
 
+    public List<UserWorkDto> selectUserWorkForWorkList(WorkDto workDto) {
+        List<UserWorkDto> userWorkDtoList = new ArrayList<>();
+        for (UserWorkEntity userWorkEntity : userWorkRepository.findAllByWorkIdToUserWork_WorkId(workDto.getWorkId())){
+            userWorkDtoList.add(UserWorkDto.toUserWorkDto(userWorkEntity));
+        }
+        return userWorkDtoList;
+    }
+
     public Map<WorkDto, UserDto> selectAllUserWorkForWorkList(List<WorkDto> workDtoList) {
         Map<WorkDto, UserDto> userWorkMap = new HashMap<>();
         for (WorkDto workDto : workDtoList) {
@@ -429,6 +437,8 @@ public class ProjectDetailSerivce {
         log.info("ProjectRequest 삭제");
         deleteProjectRoleForProject(projectDto.getProjectId());
         log.info("ProjectRole 삭제");
+        deleteProjectRequest(projectDto.getProjectId());
+        log.info("ProjectRequest 삭제");
         deleteProject(projectDto.getProjectId());
         log.info("Project 삭제");
     }
@@ -453,7 +463,7 @@ public class ProjectDetailSerivce {
         //하위 userWork list
         List<UserWorkDto> userWorkDtoList = new ArrayList<>();
         for (WorkDto workDto : workDtoList) {
-            userWorkDtoList.add(selectUserWorkForWork(workDto));
+            userWorkDtoList.addAll(selectUserWorkForWorkList(workDto));
         }
         //하위 workComment list
         List<WorkCommentDto> workCommentDtoList = new ArrayList<>();
@@ -625,6 +635,8 @@ public class ProjectDetailSerivce {
     public void deleteWork(Long workId) {
         workRepository.deleteAllByWorkId(workId);
     }
+
+    public void deleteProjectRequest(Long projectId) { projectRequestRepository.deleteAllByProjectIdToRequest_ProjectId(projectId); }
 
     public void deleteDetailList(List<DetailDto> detailDtoList) {
         for (DetailDto detailDto : detailDtoList) {
