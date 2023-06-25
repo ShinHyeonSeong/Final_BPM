@@ -78,6 +78,24 @@ public class DocumentService {
         return documentDto.getDocumentId();
     }
 
+    // 문서 제거
+    public void deleteDocument(String documentId){
+        List<Block> deleteBlockList = blockRepository.findByDocumentId(documentId);
+        List<Log> deleteLogList = logRepository.findByDocumentId(documentId);
+
+        workDocumentRepository.deleteAllByDocumentIdToWorkDocument_DocumentId(documentId);
+
+        for (Block block : deleteBlockList) {
+            blockRepository.delete(block);
+        }
+
+        for (Log log : deleteLogList) {
+            logRepository.delete(log);
+        }
+
+        documentRepository.deleteById(documentId);
+    }
+
     // 문서 저장
     public void saveDocument(JsonDocumentDto jsonDocumentDto, String userUuid, String userName){
 

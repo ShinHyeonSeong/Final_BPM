@@ -64,7 +64,7 @@ public class DocumentController {
     // 문서 새로 만들기 Document Add [Post]
     /// 새로운 문서를 만드는 작업
     @PostMapping("document/addDocument")
-    public String postAddingDocument( long workId , HttpSession session){
+    public String postAddingDocument(long workId , HttpSession session){
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
 
@@ -77,12 +77,26 @@ public class DocumentController {
         return "redirect:/document/write?id=" + documentId;
     }
 
+    @PostMapping("document/delete")
+    public String deleteDocument(String id){
+
+        documentService.deleteDocument(id);
+
+        return "redirect:"+session.getAttribute("back");
+    }
+
     // 문서 작성 Document write
     /// 문서 작성 페이지 이동
     @GetMapping("document/write")
-    public String getDocumentWrite(String id, Model model, HttpSession session) {
+    public String getDocumentWrite(String id, Model model, HttpSession session, HttpServletRequest request) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
+
+        String referer = request.getHeader("Referer");
+
+        if (!referer.contains("document/history")) {
+            session.setAttribute("back", referer);
+        }
 
         String userUuid = sessionUser.getUuid();
 
@@ -95,6 +109,7 @@ public class DocumentController {
 
         model.addAttribute("document", documentDto);
         model.addAttribute("blockList", blockDtoList);
+        model.addAttribute("back", session.getAttribute("back"));
 
         return "documentWrite";
     }
@@ -119,10 +134,13 @@ public class DocumentController {
 
     // 로그 페이지
     /// 헤당 문서의 로그 페이지 이동
-    @GetMapping("document/log")
+    // 로그 페이지
+    /// 헤당 문서의 로그 페이지 이동
+    @GetMapping("document/history")
     public String getDocumentLog(String id, Model model, HttpSession session) {
         List<LogDto> logDtoList = documentService.getLogListById(id);
         model.addAttribute("logList", logDtoList);
+        model.addAttribute("projectId", id);
         return "documentLog";
     }
 

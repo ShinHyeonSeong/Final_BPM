@@ -42,6 +42,12 @@ public class ProjectDetailSerivce {
     private LogRepository logRepository;
     @Autowired
     private BlockRepository blockRepository;
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private ProjectRequestRepository projectRequestRepository;
+    @Autowired
+    private ProjectRoleRepository projectRoleRepository;
 
     Date currentDate = new Date(); // 시작 날짜(현재) 생성
     DateManager dateManager = new DateManager();
@@ -409,6 +415,21 @@ public class ProjectDetailSerivce {
 
     /* - - - - 삭제 메서드 시작 - - - - - */
     @Transactional
+    public void deleteProjectEntity(ProjectDto projectDto) {
+        List<HeadDto> headDtoList = selectAllHead(projectDto);
+        for (HeadDto headDto : headDtoList) {
+            deleteHeadEntity(headDto.getHeadId());
+        }
+        log.info("Head 삭제");
+        deleteMessageForProject(projectDto.getProjectId());
+        log.info("Message 삭제");
+        deleteProjectRequestForProject(projectDto.getProjectId());
+        log.info("ProjectRequest 삭제");
+        deleteProjectRoleForProject(projectDto.getProjectId());
+        log.info("ProjectRole 삭제");
+    }
+
+    @Transactional
     public void deleteHeadEntity(Long headId) {
         //head
         HeadDto targetHeadDto = HeadDto.toHeadDto(headRepository.findById(headId).orElse(null));
@@ -558,10 +579,45 @@ public class ProjectDetailSerivce {
         log.info("detail 삭제 완료");
     }
 
+    @Transactional
+    public void deleteWorkEntity(Long workId) {
+        // work
+        WorkDto workDto = selectWork(workId);
+
+        List<UserWorkDto> userWorkDtoList = selectAllUserWorkForWork(workId);
+        List<WorkCommentDto> workCommentDtoList = selectAllWorkCommentForWork(workDto);
+        List<WorkDocumentDto> workDocumentDtoList = selectAllWorkDocumentForWork(workDto);
+        List<DocumentDto> documentDtoList = new ArrayList<>();
+        for (WorkDocumentDto workDocumentDto : workDocumentDtoList) {
+            DocumentDto documentDto = new DocumentDto();
+            documentDto.insertEntity(workDocumentDto.getDocumentIdToWorkDocument());
+            documentDtoList.add(documentDto);
+        }
+
+        for (DocumentDto documentDto : documentDtoList) {
+            deleteLogForDocument(documentDto);
+            log.info("log 삭제 완료");
+            deleteBlockForDocument(documentDto);
+            log.info("block 삭제 완료");
+        }
+        deleteWorkDocumentList(workDocumentDtoList);
+        log.info("workDocument 삭제 완료");
+        deleteDocumentList(documentDtoList);
+        log.info("document 삭제 완료");
+        deleteAllWorkCommentForWorkId(workId);
+        log.info("WorkComment 삭제 완료");
+        deleteAllUserWorkForWork(workId);
+        log.info("userWork 삭제 완료");
+        deleteWork(workId);
+        log.info("work 삭제 완료");
+    }
+
     public void deleteDetail(DetailDto detailDto) {
         detailRepository.deleteByDetailId(detailDto.getDetailId());
     }
-
+    public void deleteWork(Long workId) {
+        workRepository.deleteAllByWorkId(workId);
+    }
 
     public void deleteDetailList(List<DetailDto> detailDtoList) {
         for (DetailDto detailDto : detailDtoList) {
@@ -585,6 +641,10 @@ public class ProjectDetailSerivce {
         userWorkRepository.deleteAllByWorkIdToUserWork_WorkId(workId);
     }
 
+    public void deleteAllWorkCommentForWorkId(Long workId) {
+        workCommentRepository.deleteAllByWorkIdToComment_WorkId(workId);
+    }
+
     public void deleteWorkDocumentList(List<WorkDocumentDto> workDocumentDtoList) {
         for (WorkDocumentDto workDocumentDto : workDocumentDtoList) {
             workDocumentRepository.deleteAllByWorkIdToWorkDocument_WorkId(
@@ -605,6 +665,20 @@ public class ProjectDetailSerivce {
     public void deleteLogForDocument(DocumentDto documentDto) {
         logRepository.deleteAllByDocumentId(documentDto.getDocumentId());
     }
+
+    public void deleteMessageForProject(Long projectId) {
+        messageRepository.deleteAllByProjectIdToMessage_ProjectId(projectId);
+    }
+
+    public void deleteProjectRequestForProject(Long projectId) {
+        projectRequestRepository.deleteAllByProjectIdToRequest_ProjectId(projectId);
+    }
+
+    public void deleteProjectRoleForProject(Long projectId) {
+        projectRoleRepository.deleteAllByProjectIdInRole_ProjectId(projectId);
+    }
+
+
     /* - - - - 삭제 메서드 끝 - - - - - */
 
     /* - - - - 상태 변경 메서드 - - - -  */
