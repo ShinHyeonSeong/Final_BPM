@@ -179,13 +179,13 @@ public class ProjectDetailController {
         DetailDto detailDto = projectDetailSerivce.selectDetail(id);
         HeadDto headDto = projectDetailSerivce.selectHead(detailDto.getHeadIdToDetail().getHeadId());
         List<WorkDto> workDtoList = projectDetailSerivce.selectAllWorkForDetail(id);
-        //Map<WorkDto, UserDto> userWorkMap = projectDetailSerivce.selectAllUserWorkForWorkList(workDtoList);
+        Map<WorkDto, UserDto> userWorkMap = projectDetailSerivce.selectAllUserWorkForWorkList(workDtoList);
         //detail 하위 작업 표에 work 담당자를 넣어주려 했으나 오류로 수정.
         Long auth = getSessionAuth();
         model.addAttribute("detailDto", detailDto);
         model.addAttribute("headDto", headDto);
         model.addAttribute("workDtoList", workDtoList);
-        //model.addAttribute("userWorkMap", userWorkMap);
+        model.addAttribute("userWorkMap", userWorkMap);
         model.addAttribute("auth", auth);
         return "detailView";
     }

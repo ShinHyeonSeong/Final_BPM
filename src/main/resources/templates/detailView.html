@@ -23,7 +23,7 @@
 </div>
 <div class="top-bar">
   <!-- BackButton 디자인 필요 -->
-  <a href="javascript:history.back(-1)" class="back-button">
+  <a th:href="@{/project/goal/headView/{id}(id=${detailDto.headIdToDetail.headId})}" class="back-button">
     < </a>
   <h1 th:text="${detailDto.title}"></h1>
 </div>
