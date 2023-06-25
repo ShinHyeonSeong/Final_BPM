@@ -72,7 +72,7 @@ public class ProjectDetailController {
         ProjectDto sessionProject = getSessionProject();
         UserDto userDto = getSessionUser();
         List<HeadDto> headDtoList = projectDetailSerivce.selectAllHead(sessionProject);
-        List<WorkDto> userWorkDtoList = projectDetailSerivce.selectAllWorkForUser(userDto);
+        List<WorkDto> userWorkDtoList = projectDetailSerivce.selectAllWorkForProject(sessionProject);
         model.addAttribute("headDtoList", headDtoList);
         model.addAttribute("userWorkDtoList", userWorkDtoList);
         return "redirect:/project/" + sessionProject.getProjectId();
@@ -193,7 +193,7 @@ public class ProjectDetailController {
     // head 수정창 매핑 메서드
     @RequestMapping("/project/goal/head/edit/{id}")
     public String goEditHead(@PathVariable("id") Long headId,
-                             @RequestParam(value = "message", required = false)String message,
+                             @RequestParam(value = "message", required = false) String message,
                              Model model) {
         if (message != null) {
             model.addAttribute("message", message);
@@ -206,7 +206,7 @@ public class ProjectDetailController {
     // detail 수정창 매핑 메서드
     @RequestMapping("/project/goal/detail/edit/{id}")
     public String goEditDetail(@PathVariable("id") Long detailId,
-                               @RequestParam(value = "message", required = false)String message,
+                               @RequestParam(value = "message", required = false) String message,
                                Model model) {
 
         DetailDto detailDto = projectDetailSerivce.selectDetail(detailId);
@@ -222,8 +222,8 @@ public class ProjectDetailController {
 
     // work 수정창 매핑 메서드
     @RequestMapping("/project/goal/work/edit/{id}")
-    public String goEditWork(@PathVariable("id")Long workId,
-                             @RequestParam(value = "message", required = false)String message,
+    public String goEditWork(@PathVariable("id") Long workId,
+                             @RequestParam(value = "message", required = false) String message,
                              Model model) {
         WorkDto workDto = projectDetailSerivce.selectWork(workId);
         List<UserDto> userDtoList = userService.searchUserToProject(getSessionProject().getProjectId());
@@ -282,10 +282,10 @@ public class ProjectDetailController {
 
     // work 수정 실행 메서드
     @PostMapping("/project/work/edit")
-    public String editWork(@RequestParam(value = "title")String title,
-                           @RequestParam(value = "startDay")String startDay,
-                           @RequestParam(value = "deadline")String endDay,
-                           @RequestParam(value = "discription")String discription,
+    public String editWork(@RequestParam(value = "title") String title,
+                           @RequestParam(value = "startDay") String startDay,
+                           @RequestParam(value = "deadline") String endDay,
+                           @RequestParam(value = "discription") String discription,
                            @RequestParam("connectDetail") Long detailId,
                            @RequestParam(value = "workId") Long workId,
                            @RequestParam("chargeUsers") List<String> chargeUsers,
@@ -399,9 +399,11 @@ public class ProjectDetailController {
     /* - - - - 삭제 메서드 - - - - */
     @RequestMapping("/project/delete/{id}")
     public String deleteProject(@PathVariable("id")Long projectId) {
-        projectSerivce.deleteProject(projectId);
+        ProjectDto projectDto = projectSerivce.selectProject(projectId);
+        projectDetailSerivce.deleteProjectEntity(projectDto);
         return "redirect:/project/projectManagerList";
     }
+
     @RequestMapping("/project/goal/head/delete/{id}")
     public String deleteHead(@PathVariable("id") Long headId) {
         projectDetailSerivce.deleteHeadEntity(headId);
@@ -544,7 +546,7 @@ public class ProjectDetailController {
         return "messageForm";
     }
 
-    @PostMapping("/message/{id}")
+    @RequestMapping("/message/{id}")
     public String selectMessage(@PathVariable("id") Long id, Model model) {
         MessageDto messageDto = messageService.selectMessage(id);
         model.addAttribute("message", messageDto);

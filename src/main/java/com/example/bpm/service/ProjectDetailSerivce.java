@@ -48,6 +48,8 @@ public class ProjectDetailSerivce {
     private ProjectRequestRepository projectRequestRepository;
     @Autowired
     private ProjectRoleRepository projectRoleRepository;
+    @Autowired
+    private ProjectSerivce projectSerivce;
 
     Date currentDate = new Date(); // 시작 날짜(현재) 생성
     DateManager dateManager = new DateManager();
@@ -427,6 +429,8 @@ public class ProjectDetailSerivce {
         log.info("ProjectRequest 삭제");
         deleteProjectRoleForProject(projectDto.getProjectId());
         log.info("ProjectRole 삭제");
+        deleteProject(projectDto.getProjectId());
+        log.info("Project 삭제");
     }
 
     @Transactional
@@ -612,6 +616,9 @@ public class ProjectDetailSerivce {
         log.info("work 삭제 완료");
     }
 
+    public void deleteProject(Long projectId) {
+        projectRepository.deleteByProjectId(projectId);
+    }
     public void deleteDetail(DetailDto detailDto) {
         detailRepository.deleteByDetailId(detailDto.getDetailId());
     }

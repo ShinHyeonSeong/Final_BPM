@@ -87,6 +87,9 @@
 				</tbody>
 			</table>
 		</div>
+		<a th:href="@{/project/delete/{id}(id=${projectDto.projectId})}">
+			<button class="delete-btn" th:if="${auth == 1}" >프로젝트 삭제</button>
+		</a>
 	</div>
 </div>
 </body>
