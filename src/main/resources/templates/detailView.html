@@ -53,7 +53,8 @@
       </div>
 
       <div class="content">
-        <h4 class="content-title">연결된 작업</h4>
+        <h4 class="work-title">연결된 작업</h4>
+        <a href="/project/work/create" th:if="${auth == 1}"><button class="work-edit-btn">작업 추가</button></a>
         <table>
           <thead>
           <tr>

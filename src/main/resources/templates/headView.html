@@ -43,7 +43,7 @@
         <div class="linked-object">
           <div class="object-header">
             <div>하위 목표</div>
-            <button class="object-edit-btn" th:if="${auth == 1}">목표 변경</button>
+              <a href="/project/detail/create" th:if="${auth == 1}"><button class="object-edit-btn">하위 목표 추가</button></a>
           </div>
           <div class="horizon-divider-semi"></div>
           <div class="object" th:if="${connectDetailList != null}" th:each="detail : ${connectDetailList}">
