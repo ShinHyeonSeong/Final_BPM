@@ -29,7 +29,7 @@
 	<!-- BackButton 디자인 필요 -->
 	<a th:href="@{/project/goal/detailView/{id}(id=${workDto.detailIdToWork.detailId})}" class="back-button">
 		< </a>
-	<h1 th:text="${workDto.title}"></h1>
+	<h1 th:text="'작업 : ' + ${workDto.title}"></h1>
 
 </div>
 

@@ -25,7 +25,7 @@
   <!-- BackButton 디자인 필요 -->
   <a th:href="@{/project/goal/headView/{id}(id=${detailDto.headIdToDetail.headId})}" class="back-button">
     < </a>
-  <h1 th:text="${detailDto.title}"></h1>
+  <h1 th:text="'하위 목표 : ' + ${detailDto.title}"></h1>
 </div>
 
 <div class="page-container">
