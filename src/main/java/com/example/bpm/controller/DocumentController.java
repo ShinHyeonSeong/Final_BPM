@@ -105,7 +105,7 @@ public class DocumentController {
 
         String userUuid = sessionUser.getUuid();
 
-        if(getSessionAuth() == 2){
+        if(documentService.accreditUserToWork(userUuid, id, getSessionAuth())){
             return "redirect:/document/view?id="+id;
         }
 

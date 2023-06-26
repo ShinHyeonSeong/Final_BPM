@@ -173,12 +173,15 @@ public class DocumentService {
         workDocumentRepository.save(workDocumentEntity);
     }
 
-    public boolean accreditUserToWork(String uuid, String DocumentId){
+    public boolean accreditUserToWork(String uuid, String DocumentId, Long auth){
 
         List<UserWorkEntity> userWorkEntityList = userWorkRepository.findAllByUserIdToUserWork_Uuid(uuid);
 
         WorkDocumentEntity workDocumentEntity = workDocumentRepository.findByDocumentIdToWorkDocument_DocumentId(DocumentId);
 
+        if (auth == 0){
+            return false;
+        }
         for (UserWorkEntity userWorkEntity: userWorkEntityList) {
             if (userWorkEntity.getWorkIdToUserWork().getWorkId().equals(workDocumentEntity.getWorkIdToWorkDocument().getWorkId()))
                 return false;
