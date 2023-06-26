@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>My Goals</title>
+  <title>Border Project Manager</title>
   <link rel="stylesheet" href="/css/goalDetail.css">
   <link rel="stylesheet" href="/css/sidebar.css">
 </head>
@@ -66,7 +66,7 @@
           <tbody>
           <tr th:each="userWork : ${userWorkMap}">
             <td><a th:href="@{/project/work/detail/{id}(id=${userWork.key.workId})}" th:text="${userWork.key.title}">작업명</a></td>
-            <td th:text="${userWork.value.name}"></td>
+            <td><th:block th:each="value : ${userWork.value}">&nbsp;<th:block th:text="${value.name}"></th:block></th:block></td>
             <td th:text="${#dates.format(userWork.key.endDay, 'yyyy-MM-dd')}"></td>
           </tr>
           </tbody>
