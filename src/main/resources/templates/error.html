@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Border Project Manager</title>
 </head>
 
 <style>
@@ -108,7 +108,7 @@ svg {
   <div class="buttons-con">
     <div class="action-link-wrap">
       <a onclick="history.back(-1)" class="link-button link-back-button">Go Back</a>
-      <a href="/project/projectManagerList" class="link-button">Go to Home Page</a>
+      <a th:href="${link}" class="link-button">Go to Home Page</a>
     </div>
   </div>
 </div>

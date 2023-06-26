@@ -250,13 +250,16 @@ public class ProjectDetailSerivce {
         return userWorkDtoList;
     }
 
-    public Map<WorkDto, UserDto> selectAllUserWorkForWorkList(List<WorkDto> workDtoList) {
-        Map<WorkDto, UserDto> userWorkMap = new HashMap<>();
+    public Map<WorkDto, List<UserDto>> selectAllUserWorkForWorkList(List<WorkDto> workDtoList) {
+        Map<WorkDto, List<UserDto>> userWorkMap = new HashMap<>();
         for (WorkDto workDto : workDtoList) {
-            UserWorkEntity userWorkEntity = userWorkRepository.findByWorkIdToUserWork_WorkId(workDto.getWorkId());
-            WorkDto workDtoKey = WorkDto.toWorkDto(userWorkEntity.getWorkIdToUserWork());
-            UserDto userDtoValue = UserDto.toUserDto(userWorkEntity.getUserIdToUserWork());
-            userWorkMap.put(workDtoKey, userDtoValue);
+            List<UserWorkEntity> userWorkEntityList = userWorkRepository.findAllByWorkIdToUserWork_WorkId(workDto.getWorkId());
+            WorkDto workDtoKey = WorkDto.toWorkDto(userWorkEntityList.get(0).getWorkIdToUserWork());
+            List<UserDto> userDtoList = new ArrayList<>();
+            for (UserWorkEntity userWorkEntity : userWorkEntityList) {
+                userDtoList.add(UserDto.toUserDto(userWorkEntity.getUserIdToUserWork()));
+            }
+            userWorkMap.put(workDtoKey, userDtoList );
         }
         return userWorkMap;
     }
