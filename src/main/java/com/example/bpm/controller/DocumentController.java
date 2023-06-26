@@ -31,6 +31,11 @@ public class DocumentController {
         return currentUser;
     }
 
+    public Long getSessionAuth() {
+        Long auth = (Long) session.getAttribute("auth");
+        return auth;
+    }
+
     //////////////////////////////////////////////////////////////////
     // 페이지 연결
     //////////////////////////////////////////////////////////////////
@@ -100,7 +105,7 @@ public class DocumentController {
 
         String userUuid = sessionUser.getUuid();
 
-        if(documentService.accreditUserToWork(userUuid, id)){
+        if(getSessionAuth() == 2){
             return "redirect:/document/view?id="+id;
         }
 
