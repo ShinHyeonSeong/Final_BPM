@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>Border Project Manager</title>
@@ -92,7 +92,7 @@
 			</thead>
 			<tbody>
 			<tr th:each="documentDto : ${documentDtoList}">
-				<td class="job-name"><a th:href="@{/document/view/{id}(id=${documentDto.uuid})}" th:text="${documentDto.title}"></a></td>
+				<td class="job-name"><a th:href="@{/document/view(id=${documentDto.documentId})}" th:text="${documentDto.title}"></a></td>
 				<td class="job-deadline" th:text="${documentDto.dateDocument}"></td>
 			</tr>
 			</tbody>
