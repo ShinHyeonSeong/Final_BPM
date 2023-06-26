@@ -539,7 +539,7 @@ public class ProjectDetailSerivce {
         //하위 userWork list
         List<UserWorkDto> userWorkDtoList = new ArrayList<>();
         for (WorkDto workDto : workDtoList) {
-            userWorkDtoList.add(selectUserWorkForWork(workDto));
+            userWorkDtoList.addAll(selectUserWorkForWorkList(workDto));
         }
         log.info("userWork 검색 완료");
         //하위 workComment list
