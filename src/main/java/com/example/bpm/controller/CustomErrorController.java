@@ -22,7 +22,7 @@ public class CustomErrorController implements ErrorController {
     }
 
     @GetMapping("/error")
-    public String handleError(HttpServletRequest request, HttpSession session, Model model) {
+    public String handleError(HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         if(status != null){
@@ -34,14 +34,6 @@ public class CustomErrorController implements ErrorController {
                 return "error";
             }
         }
-
-
-
-        if(getSessionUser() == null){
-            model.addAttribute("link", "/");
-        }else
-            model.addAttribute("link", "/project/projectManagerList");
-
 
         return "error";
     }
