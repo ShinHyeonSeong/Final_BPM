@@ -78,13 +78,13 @@
 				<td th:text="${requests.prjoectIdToRequest.getTitle()}"></td>
 				<td>
 					<div class="btn-wrap">
-						<a th:href="@{/requestResponse/{sendUser}/{recvUser}/{project}/{acceptable}(
+						<a th:href="@{/project/requestResponse/{sendUser}/{recvUser}/{project}/{acceptable}(
             sendUser=${requests.sendUUID.getUuid()}, recvUser=${requests.recvUUID.getUuid()},
             project=${requests.prjoectIdToRequest.getProjectId()}, acceptable=${true}
             )}">
 							<button class="accept-btn">수락</button>
 						</a>
-						<a th:href="@{/requestResponse/{sendUser}/{recvUser}/{project}/{acceptable}(
+						<a th:href="@{/project/requestResponse/{sendUser}/{recvUser}/{project}/{acceptable}(
             sendUser=${requests.sendUUID.getUuid()}, recvUser=${requests.recvUUID.getUuid()},
             project=${requests.prjoectIdToRequest.getProjectId()}, acceptable=${false}
             )}">

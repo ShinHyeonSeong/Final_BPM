@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -53,43 +54,24 @@ public class UserController {
         session.setAttribute("auth", auth);
     }
 
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
-
-    @GetMapping("/user/join")
-    public String goSave() {
-        return "join";
+    public ModelAndView modelAndView(String html){
+        ModelAndView mav = new ModelAndView(html);
+        return mav;
     }
 
 
-    @PostMapping("/user/dosave")
-    public String save(@RequestParam("email") String email,
-                       @RequestParam("password") String password,
-                       @RequestParam("username") String name, Model model) {
-        UserDto findUser = userService.findByEmail(email);
-        if (findUser == null) {
-            UserDto NewUser = new UserDto(email, password, name);
-            log.info("DTO 정상 값 입력 (컨트롤러)" + "/" + email + "/" + password + "/" + name);
-            UserDto result = userService.save(NewUser);
-            return "login";
-        } else {
-            model.addAttribute("message", "이미 있는 이메일 입니다.");
-            return "join";
-        }
+    @GetMapping(value = "login")
+    public ModelAndView login() {
+        return modelAndView("login");
     }
 
-
-
-    @GetMapping("/user/login")
-    public String login() {
-        return "login";
+    @GetMapping(value = "/join")
+    public ModelAndView goSave() {
+        return modelAndView("join");
     }
 
-
-    @PostMapping("/user/dologin")
-    public String login(@RequestParam("email") String email,
+    @PostMapping("dologin")
+    public ModelAndView login(@RequestParam("email") String email,
                         @RequestParam("password") String password,
                         HttpSession session, Model model) {
         UserDto loginResult = userService.login(email, password);
@@ -99,30 +81,47 @@ public class UserController {
             session.setAttribute("userInfo", loginResult);
             //로그인 성공 알림창 만들어줘야함
             log.info("로그인 성공 세션 정상 입력 (컨트롤러 작동)");
-            return "redirect:/project/projectManagerList";
+            return modelAndView("redirect:/project/projectManagerList");
         } else {
             model.addAttribute("message", "이메일 혹은 비밀번호가 일치하지 않습니다.");
             log.info("로그인 실패 세션 적용 실패 (컨트롤러 작동)");
-            return "login";
+            return modelAndView("login");
         }
     }
 
-    @GetMapping("/user/logout")
-    public String logout(HttpSession session) {
+    @PostMapping("/dosave")
+    public ModelAndView save(@RequestParam("email") String email,
+                       @RequestParam("password") String password,
+                       @RequestParam("username") String name, Model model) {
+        UserDto findUser = userService.findByEmail(email);
+        if (findUser == null) {
+            UserDto NewUser = new UserDto(email, password, name);
+            log.info("DTO 정상 값 입력 (컨트롤러)" + "/" + email + "/" + password + "/" + name);
+            UserDto result = userService.save(NewUser);
+            return modelAndView("login");
+        } else {
+            model.addAttribute("message", "이미 있는 이메일 입니다.");
+            return modelAndView("join");
+        }
+    }
+
+
+    @GetMapping("logout")
+    public ModelAndView logout(HttpSession session) {
         //세션으로 로그아웃 처리
         session.invalidate();
         log.info("로그아웃 성공 세션 정상 작동(컨트롤러)");
-        return "redirect:/index";
+        return modelAndView("redirect:/index");
     }
 
 
     //프로필로 가는 메서드 세션값을 활용해서 user의 정보를 찾아낸다
-    @GetMapping("/user/account")
-    public String goAccount(HttpSession session, Model model) {
+    @GetMapping("/account")
+    public ModelAndView goAccount(HttpSession session, Model model) {
         UserDto sessionUser = getSessionUser();
         UserDto result = userService.findByUser(sessionUser.getUuid());
         model.addAttribute("user", result);
-        return "account";
+        return modelAndView("account");
 //        if (result != null) {
 //            model.addAttribute("user", sessionUser);
 //            log.info("회원정보 찾기 성공 (컨트롤러 작동) detail 페이지로 이동");
@@ -133,19 +132,19 @@ public class UserController {
 //        }
     }
 
-    @GetMapping("/user/accountUpdate")
-    public String goAccountChange(HttpSession session, Model model) {
+    @GetMapping("/accountUpdate")
+    public ModelAndView goAccountChange(HttpSession session, Model model) {
         UserDto sessionUser = getSessionUser();
         UserDto result = userService.findByUser(sessionUser.getUuid());
         model.addAttribute("user", result);
-        return "accountUpdate";
+        return modelAndView("accountUpdate");
     }
 
     //프로필에서 정보 변경 시 유저의 정보를 찾아오는 메서드
 
     //회원 정보 변경 시 메서드
-    @PostMapping("/user/update")
-    public String update(@RequestParam("email") String email,
+    @PostMapping("/update")
+    public ModelAndView update(@RequestParam("email") String email,
                          @RequestParam("userName") String name, HttpSession session) {
         UserDto sessionUser = getSessionUser();
         log.info("변경 전 정보 " + sessionUser.getEmail() + sessionUser.getName());
@@ -155,25 +154,25 @@ public class UserController {
             log.info("정상 업데이트 되었습니다 (컨트롤러 작동)");
 //            session.removeAttribute("userInfo");
 //            session.setAttribute("userInfo", updateDto);
-            return "redirect:/user/login";
+            return modelAndView("redirect:/user/login");
         } else {
             log.info("업데이트 불가 (컨트롤러 작동)");
-            return "redirect:/user/accountUpdate";
+            return modelAndView("redirect:/user/accountUpdate");
         }
     }
 
-    @GetMapping("/user/passwordChange")
-    public String goPasswordChange(Model model) {
+    @GetMapping("/passwordChange")
+    public ModelAndView goPasswordChange(Model model) {
         UserDto sessionUser = getSessionUser();
         UserDto result = userService.findByUser(sessionUser.getUuid());
         model.addAttribute("user", result);
-        return "passwordChange";
+        return modelAndView("passwordChange");
 
     }
 
     // 비밀번호 변경 메서드
     @PostMapping("/passwordUpdate")
-    public String passwordChange(@RequestParam("email") String email,
+    public ModelAndView passwordChange(@RequestParam("email") String email,
                                  @RequestParam("password") String password,
                                  @RequestParam("newPassword") String newPassword,
                                  @RequestParam("confirmPassword") String confirmPassword,
@@ -184,35 +183,35 @@ public class UserController {
         int result = userService.changePassword(sessionUser, email, password, newPassword, confirmPassword);
         if (result == 0) {
             session.removeAttribute("userInfo");
-            return "login";
-        } else return "login";
+            return modelAndView("login");
+        } else return modelAndView("login");
     }
 
     //회원 탈퇴 메서드
-    @GetMapping("/user/delete")
-    public String deleteById(HttpSession session) {
+    @GetMapping("/delete")
+    public ModelAndView deleteById(HttpSession session) {
         UserDto userDto = getSessionUser();
         userService.deleteById(userDto.getUuid());
         session.invalidate();
         log.info("탈퇴되었습니다 (컨트롤러 작동)");
-        return "redirect:/index";
+        return modelAndView("redirect:/index");
     }
 
-    @GetMapping("/user/search")
-    public String searchMember() {
-        return "searchMember";
+    @GetMapping("/search")
+    public ModelAndView searchMember() {
+        return modelAndView("searchMember");
     }
 
-    @PostMapping("/user/returnSearch")
-    public String search(@RequestParam("searchKeyword") String searchKeyword, Model model) {
+    @PostMapping("/returnSearch")
+    public ModelAndView search(@RequestParam("searchKeyword") String searchKeyword, Model model) {
         log.info("검색 키워드 : " + searchKeyword);
         List<UserDto> dtoList = userService.searchUser(searchKeyword);
 
         if (dtoList.isEmpty()) {
             log.info("검색 결과 없음");
-            return "redirect:/user/search";
+            return modelAndView("redirect:/user/search");
         }
         model.addAttribute("searchUsers", dtoList);
-        return "searchMember";
+        return modelAndView("searchMember");
     }
 }
