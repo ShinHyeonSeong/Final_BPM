@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @Slf4j
 @ToString
 @RequiredArgsConstructor
@@ -41,8 +42,8 @@ public class ProjectDetailController {
     @Autowired
     private HttpSession session;
 
+    /* - - - - - 지역 함수 시작 - - - - - */
 
-    // 생각을 해보니 말야 매번 세션 호출하는것보다는 그냥 따로 메서드 만드는게 훨씬 효율이 좋을듯. 편하기도 하고
     public UserDto getSessionUser() {
         UserDto currentUser = (UserDto) session.getAttribute("userInfo");
         return currentUser;
@@ -65,6 +66,13 @@ public class ProjectDetailController {
         Long auth = userService.checkRole(projectDto.getProjectId(), userDto.getUuid());
         session.setAttribute("auth", auth);
     }
+
+    public ModelAndView modelAndView(String html) {
+        ModelAndView mav = new ModelAndView(html);
+        return mav;
+    }
+
+    /* - - - - - 지역 함수 끝 - - - - - */
 
     // 프로젝트 메인 창 매핑
     @GetMapping("/project/main")
@@ -398,7 +406,7 @@ public class ProjectDetailController {
 
     /* - - - - 삭제 메서드 - - - - */
     @RequestMapping("/project/delete/{id}")
-    public String deleteProject(@PathVariable("id")Long projectId) {
+    public String deleteProject(@PathVariable("id") Long projectId) {
         ProjectDto projectDto = projectSerivce.selectProject(projectId);
         projectDetailSerivce.deleteProjectEntity(projectDto);
         return "redirect:/project/projectManagerList";
@@ -421,63 +429,6 @@ public class ProjectDetailController {
         projectDetailSerivce.deleteWorkEntity(workId);
         return "redirect:/project/works";
     }
-
-
-    /* - - - - 댓글 관련 메서드 - - - -*/
-    @PostMapping("/workDetail/addComment")
-    public String plusComment(@RequestParam("workId") Long workId,
-                              @RequestParam("comment") String comment,
-                              HttpSession session, Model model, HttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        /* 댓글을 추가 시키는 메서드 */
-        WorkDto workDto = projectDetailSerivce.selectWork(workId);
-        UserDto nowUser = getSessionUser();
-        WorkCommentDto workCommentDto = new WorkCommentDto();
-        workCommentDto.setComment(comment);
-        workCommentDto.setWorkIdToComment(WorkEntity.toWorkEntity(workDto));
-        workCommentDto.setUserIdToComment(UserEntity.toUserEntity(nowUser));
-        /* 댓글을 추가 시키는 메서드 끝 */
-
-        /*추가 시킬 댓글 내용과, 현재 documentID 를 같이 넘겨 리턴 값으로 자동 리스트를 뽑아온다*/
-        List<WorkCommentDto> list = projectDetailSerivce.plusComment(workCommentDto, workId);
-        model.addAttribute("commentList", list);
-        return "redirect:" + referer;
-    }
-
-    //댓글 수정을 하기 위한 댓글 데이터를 가져오는 메서드 (프론트에서는 댓글을 수정할 수 있는 화면이 필요하다
-    @GetMapping("/workDetail/commentUpdate")
-    public String updateForm(@RequestParam("commentId") Long commentId, Model model) {
-        WorkCommentDto updateComment = projectDetailSerivce.findComment(commentId);
-        model.addAttribute("updateComment", updateComment);
-
-        return "";
-    }
-
-    @PostMapping("댓글 수정 완료 시")
-    public String updateComment(@RequestParam("workId") Long workId,
-                                @RequestParam("comment") String comment, HttpSession session, Model model) {
-
-        WorkDto workDto = projectDetailSerivce.selectWork(workId);
-        UserDto nowUser = getSessionUser();
-        WorkCommentDto workCommentDto = new WorkCommentDto();
-        workCommentDto.setComment(comment);
-        workCommentDto.setWorkIdToComment(WorkEntity.toWorkEntity(workDto));
-        workCommentDto.setUserIdToComment(UserEntity.toUserEntity(nowUser));
-
-        List<WorkCommentDto> list = projectDetailSerivce.plusComment(workCommentDto, workId);
-        model.addAttribute("commentList", list);
-        return "";
-    }
-
-    @RequestMapping("/workDetail/commentDelete/{cid}")
-    public String deleteComment(@PathVariable("cid") Long commentId, Model model) {
-        WorkCommentDto workCommentDto = projectDetailSerivce.findComment(commentId);
-        Long workId = workCommentDto.getWorkIdToComment().getWorkId();
-        List<WorkCommentDto> dtoList = projectDetailSerivce.deleteComment(commentId, workId);
-        model.addAttribute("CommentList", dtoList);
-        return "redirect:/project/work/detail/" + workId;
-    }
-    /* - - - - 댓글 관련 메서드 끝 - - - -*/
 
     /* 상태 완료 처리 메서드 */
     @RequestMapping("/project/work/completion/change/{id}")
@@ -517,51 +468,6 @@ public class ProjectDetailController {
     }
 
 
-    /* - - - - - Message Contorller - - - - - - */
-    @GetMapping("/recvMessageList")
-    public String viewRecvMessage(HttpSession session, Model model) {
-        UserDto userDto = getSessionUser();
-        ProjectDto projectDto = getSessionProject();
-        List<MessageDto> messageDtoList = messageService.selectAllRecv(userDto, projectDto);
 
-        model.addAttribute("List", messageDtoList);
-        return "recvMessageList";
-    }
-
-    @GetMapping("/sendMessageList")
-    public String viewSendMessage(HttpSession session, Model model) {
-        UserDto userDto = getSessionUser();
-        ProjectDto projectDto = getSessionProject();
-        List<MessageDto> messageDtoList = messageService.selectAllSend(userDto, projectDto);
-
-        model.addAttribute("List", messageDtoList);
-
-        return "sendMessageList";
-    }
-
-    @GetMapping("/messageForm")
-    public String sendMessageForm(Model model) {
-        List<UserDto> userDtos = userService.searchUserToProject(getSessionProject().getProjectId());
-        model.addAttribute("userList", userDtos);
-        return "messageForm";
-    }
-
-    @RequestMapping("/message/{id}")
-    public String selectMessage(@PathVariable("id") Long id, Model model) {
-        MessageDto messageDto = messageService.selectMessage(id);
-        model.addAttribute("message", messageDto);
-
-        return "messageDetail";
-    }
-
-    @PostMapping("/sendMessage")
-    public String sendMessage(@RequestParam(value = "title") String title,
-                              @RequestParam(value = "content") String content,
-                              @RequestParam(value = "recvName") String name,
-                              HttpSession session) {
-        log.info(name + "입니다.");
-        messageService.sendMessage(title, content, getSessionUser(), name, getSessionProject());
-        return "redirect:/sendMessageList";
-    }
 }
 
