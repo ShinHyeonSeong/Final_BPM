@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,9 +45,14 @@ public class CommentController {
         return auth;
     }
 
+    public ModelAndView modelAndView(String html) {
+        ModelAndView mav = new ModelAndView(html);
+        return mav;
+    }
+
     /* - - - - 댓글 관련 메서드 - - - -*/
     @PostMapping("/workDetail/addComment")
-    public String plusComment(@RequestParam("workId") Long workId,
+    public ModelAndView plusComment(@RequestParam("workId") Long workId,
                               @RequestParam("comment") String comment,
                               HttpSession session, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
@@ -62,16 +68,16 @@ public class CommentController {
         /*추가 시킬 댓글 내용과, 현재 documentID 를 같이 넘겨 리턴 값으로 자동 리스트를 뽑아온다*/
         List<WorkCommentDto> list = projectDetailSerivce.plusComment(workCommentDto, workId);
         model.addAttribute("commentList", list);
-        return "redirect:" + referer;
+        return modelAndView("redirect:" + referer);
     }
 
     //댓글 수정을 하기 위한 댓글 데이터를 가져오는 메서드 (프론트에서는 댓글을 수정할 수 있는 화면이 필요하다
     @GetMapping("/workDetail/commentUpdate")
-    public String updateForm(@RequestParam("commentId") Long commentId, Model model) {
+    public ModelAndView updateForm(@RequestParam("commentId") Long commentId, Model model) {
         WorkCommentDto updateComment = projectDetailSerivce.findComment(commentId);
         model.addAttribute("updateComment", updateComment);
 
-        return "";
+        return modelAndView("");
     }
 
     @PostMapping("댓글 수정 완료 시")
@@ -91,12 +97,12 @@ public class CommentController {
     }
 
     @RequestMapping("/workDetail/commentDelete/{cid}")
-    public String deleteComment(@PathVariable("cid") Long commentId, Model model) {
+    public ModelAndView deleteComment(@PathVariable("cid") Long commentId, Model model) {
         WorkCommentDto workCommentDto = projectDetailSerivce.findComment(commentId);
         Long workId = workCommentDto.getWorkIdToComment().getWorkId();
         List<WorkCommentDto> dtoList = projectDetailSerivce.deleteComment(commentId, workId);
         model.addAttribute("CommentList", dtoList);
-        return "redirect:/project/work/detail/" + workId;
+        return modelAndView("redirect:/project/work/detail/" + workId);
     }
     /* - - - - 댓글 관련 메서드 끝 - - - -*/
 
