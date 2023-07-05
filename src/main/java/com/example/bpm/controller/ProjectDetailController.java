@@ -317,21 +317,19 @@ public class ProjectDetailController {
         ProjectDto currentProject = getSessionProject();
         List<WorkDto> sessionUserWorkDtoList = projectDetailSerivce.selectAllWorkForUser(currentUser);
         List<WorkDto> userWorkDtoList = new ArrayList<>();
-        log.info("현재 진입 프로젝트 : " + currentProject.getProjectId());
 
         for (WorkDto workDto : sessionUserWorkDtoList) {
-            log.info("session user workDto list에서 현재 프로젝트 id와 같은 dto 리스트에 삽입 " + currentProject.getProjectId());
             if (workDto.getProjectIdToWork().getProjectId() == currentProject.getProjectId()) {
-                log.info("리스트 삽입 : " + workDto.getWorkId() + ".");
-                log.info("해당 dto의 projectId : " + workDto.getProjectIdToWork().getProjectId() + ".");
                 userWorkDtoList.add(workDto);
             }
         }
+
         List<WorkDto> projectWorkDtoList = projectDetailSerivce.selectAllWorkForProject(currentProject);
         Long auth = getSessionAuth();
         if (projectWorkDtoList != null) {
             model.addAttribute("projectWorkDtoList", projectWorkDtoList);
         }
+
         model.addAttribute("userWorkDtoList", userWorkDtoList);
         model.addAttribute("auth", auth);
         return modelAndView("work");

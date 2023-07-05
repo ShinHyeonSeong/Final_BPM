@@ -50,11 +50,10 @@ public class CommentController {
         return mav;
     }
 
-    /* - - - - 댓글 관련 메서드 - - - -*/
     @PostMapping("/workDetail/addComment")
     public ModelAndView plusComment(@RequestParam("workId") Long workId,
-                              @RequestParam("comment") String comment,
-                              HttpSession session, Model model, HttpServletRequest request) {
+                                    @RequestParam("comment") String comment,
+                                    HttpSession session, Model model, HttpServletRequest request) {
         String referer = request.getHeader("Referer");
         /* 댓글을 추가 시키는 메서드 */
         WorkDto workDto = projectDetailSerivce.selectWork(workId);
@@ -104,7 +103,5 @@ public class CommentController {
         model.addAttribute("CommentList", dtoList);
         return modelAndView("redirect:/project/work/detail/" + workId);
     }
-    /* - - - - 댓글 관련 메서드 끝 - - - -*/
-
 
 }

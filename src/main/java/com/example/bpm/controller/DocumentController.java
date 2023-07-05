@@ -24,8 +24,6 @@ public class DocumentController {
     @Autowired
     private HttpSession session;
 
-    // 생각을 해보니 말야 매번 세션 호출하는것보다는 그냥 따로 메서드 만드는게 훨씬 효율이 좋을듯. 편하기도 하고
-
     public UserDto getSessionUser() {
         UserDto currentUser = (UserDto) session.getAttribute("userInfo");
         return currentUser;
