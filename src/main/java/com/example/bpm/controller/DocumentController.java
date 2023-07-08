@@ -20,7 +20,7 @@ public class DocumentController {
 
     // 서비스 AutoWired
     @Autowired
-    private DocumentService documentService;
+    private static DocumentService documentService;
     @Autowired
     private HttpSession session;
 

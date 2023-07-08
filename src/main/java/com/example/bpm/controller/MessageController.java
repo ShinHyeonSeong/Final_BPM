@@ -23,11 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageController {
     @Autowired
-    private UserService userService;
+    private static UserService userService;
     @Autowired
-    private ProjectDetailSerivce projectDetailSerivce;
+    private static ProjectDetailSerivce projectDetailSerivce;
     @Autowired
-    private MessageService messageService;
+    private static MessageService messageService;
     @Autowired
     private HttpSession session;
 

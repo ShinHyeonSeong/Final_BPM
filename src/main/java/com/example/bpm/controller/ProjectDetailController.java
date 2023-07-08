@@ -26,15 +26,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProjectDetailController {
     @Autowired
-    private ProjectDetailSerivce projectDetailSerivce;
+    private static ProjectDetailSerivce projectDetailSerivce;
     @Autowired
-    private ProjectSerivce projectSerivce;
+    private static ProjectSerivce projectSerivce;
     @Autowired
-    private DocumentService documentService;
+    private static DocumentService documentService;
     @Autowired
-    private UserService userService;
+    private static UserService userService;
     @Autowired
-    private ExceptionService exceptionService;
+    private static ExceptionService exceptionService;
     @Autowired
     private HttpSession session;
 

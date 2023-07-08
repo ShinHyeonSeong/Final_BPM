@@ -26,9 +26,9 @@ import java.util.List;
 public class CommentController {
 
     @Autowired
-    private ProjectDetailSerivce projectDetailSerivce;
+    private static ProjectDetailSerivce projectDetailSerivce;
     @Autowired
-    private HttpSession session;
+    private static HttpSession session;
 
     public UserDto getSessionUser() {
         UserDto currentUser = (UserDto) session.getAttribute("userInfo");
