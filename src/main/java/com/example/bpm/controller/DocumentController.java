@@ -12,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class DocumentController {
 
     // 서비스 AutoWired
@@ -34,11 +35,16 @@ public class DocumentController {
         return auth;
     }
 
+    public ModelAndView modelAndView(String html) {
+        ModelAndView mav = new ModelAndView(html);
+        return mav;
+    }
+
 
     // 문서 리스트 Document List
     /// 문서 리스트 관련 페이지 연결
     @GetMapping("/project/document")
-    public String getDocumentList(Model model, HttpSession session){
+    public ModelAndView getDocumentList(Model model, HttpSession session) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
 
@@ -58,13 +64,13 @@ public class DocumentController {
         model.addAttribute("projectDocumentList", projectDocumentList);
 
 
-        return "documentList";
+        return modelAndView("documentList");
     }
 
     // 문서 새로 만들기 Document Add [Post]
     /// 새로운 문서를 만드는 작업
     @PostMapping("document/addDocument")
-    public String postAddingDocument(long workId , HttpSession session){
+    public ModelAndView postAddingDocument(long workId, HttpSession session) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
 
@@ -74,21 +80,21 @@ public class DocumentController {
 
         documentService.workDocumentAdd(workId, documentId);
 
-        return "redirect:/document/write?id=" + documentId;
+        return modelAndView("redirect:/document/write?id=" + documentId);
     }
 
     @PostMapping("document/delete")
-    public String deleteDocument(String id){
+    public ModelAndView deleteDocument(String id) {
 
         documentService.deleteDocument(id);
 
-        return "redirect:"+session.getAttribute("back");
+        return modelAndView("redirect:" + session.getAttribute("back"));
     }
 
     // 문서 작성 Document write
     /// 문서 작성 페이지 이동
     @GetMapping("document/write")
-    public String getDocumentWrite(String id, Model model, HttpSession session, HttpServletRequest request) {
+    public ModelAndView getDocumentWrite(String id, Model model, HttpSession session, HttpServletRequest request) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
 
@@ -100,8 +106,8 @@ public class DocumentController {
 
         String userUuid = sessionUser.getUuid();
 
-        if(documentService.accreditUserToWork(userUuid, id, getSessionAuth())){
-            return "redirect:/document/view?id="+id;
+        if (documentService.accreditUserToWork(userUuid, id, getSessionAuth())) {
+            return modelAndView("redirect:/document/view?id=" + id);
         }
 
         DocumentDto documentDto = documentService.getDocumentById(id);
@@ -111,13 +117,13 @@ public class DocumentController {
         model.addAttribute("blockList", blockDtoList);
         model.addAttribute("back", session.getAttribute("back"));
 
-        return "documentWrite";
+        return modelAndView("documentWrite");
     }
 
     // 문서 뷰 Document view
     /// 문서 작성 페이지 이동
     @GetMapping("document/view")
-    public String getDocumentView(String id, Model model, HttpSession session) {
+    public ModelAndView getDocumentView(String id, Model model, HttpSession session) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
         String userUuid = sessionUser.getUuid();
@@ -128,7 +134,7 @@ public class DocumentController {
         model.addAttribute("document", documentDto);
         model.addAttribute("blockList", blockDtoList);
 
-        return "documentDetail";
+        return modelAndView("documentDetail");
     }
 
 
@@ -137,22 +143,22 @@ public class DocumentController {
     // 로그 페이지
     /// 헤당 문서의 로그 페이지 이동
     @GetMapping("document/history")
-    public String getDocumentLog(String id, Model model, HttpSession session) {
+    public ModelAndView getDocumentLog(String id, Model model, HttpSession session) {
         List<LogDto> logDtoList = documentService.getLogListById(id);
         model.addAttribute("logList", logDtoList);
         model.addAttribute("projectId", id);
-        return "documentLog";
+        return modelAndView("documentLog");
     }
 
     @PostMapping("document/changeLogData")
-    public String postDocumentReturnLog(String id, HttpSession session) {
+    public ModelAndView postDocumentReturnLog(String id, HttpSession session) {
 
         UserDto sessionUser = (UserDto) session.getAttribute("userInfo");
 
         String userName = sessionUser.getName();
 
         String documentId = documentService.changeLogData(id, userName);
-        return "redirect:/document/write?id=" + documentId;
+        return modelAndView("redirect:/document/write?id=" + documentId);
     }
 
 
