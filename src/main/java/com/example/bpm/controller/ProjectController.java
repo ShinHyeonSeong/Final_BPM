@@ -25,7 +25,7 @@ import java.util.List;
 public class ProjectController {
 
     @Autowired
-    final private ProjectSerivce projectSerivce;
+    private ProjectSerivce projectSerivce;
     @Autowired
     private UserService userService;
     @Autowired
@@ -241,13 +241,12 @@ public class ProjectController {
     // @PathVariable 통해 전달하여 url 노출됨. 추후 재고
     @RequestMapping("/requestResponse/{sendUser}/{recvUser}/{project}/{acceptable}")
     public ModelAndView requestResponse(@PathVariable("sendUser") String sendUuid,
-                                  @PathVariable("recvUser") String recvUuid,
-                                  @PathVariable("project") Long projectId,
-                                  @PathVariable("acceptable") boolean acceptable) {
+                                        @PathVariable("recvUser") String recvUuid,
+                                        @PathVariable("project") Long projectId,
+                                        @PathVariable("acceptable") boolean acceptable) {
         projectSerivce.submitInvite(sendUuid, recvUuid, projectId, acceptable);
         return modelAndView("redirect:/project/inviteList");
     }
-
 
 
 }

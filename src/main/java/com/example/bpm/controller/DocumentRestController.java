@@ -21,7 +21,7 @@ public class DocumentRestController {
 
     // 서비스 AutoWired
     @Autowired
-    private DocumentService documentService;
+    private static DocumentService documentService;
 
     // 문서 저장 json
     @PostMapping("/document/save")

@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CalenderController {
     @Autowired
-    private CalendarService calendarService;
+    private static CalendarService calendarService;
     @Autowired
     private HttpSession session;
     public UserDto getSessionUser() {

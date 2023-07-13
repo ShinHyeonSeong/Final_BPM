@@ -26,9 +26,9 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    final private UserService userService;
+    private static UserService userService;
     @Autowired
-    final private ProjectSerivce projectSerivce;
+    private static ProjectSerivce projectSerivce;
     @Autowired
     HttpSession session;
 
@@ -54,7 +54,7 @@ public class UserController {
         session.setAttribute("auth", auth);
     }
 
-    public ModelAndView modelAndView(String html){
+    public ModelAndView modelAndView(String html) {
         ModelAndView mav = new ModelAndView(html);
         return mav;
     }
@@ -72,8 +72,8 @@ public class UserController {
 
     @PostMapping("dologin")
     public ModelAndView login(@RequestParam("email") String email,
-                        @RequestParam("password") String password,
-                        HttpSession session, Model model) {
+                              @RequestParam("password") String password,
+                              HttpSession session, Model model) {
         UserDto loginResult = userService.login(email, password);
         if (loginResult != null) {
             //세션에 로그인한 정보롤 담아줌 -> main 창에 적용되고 main에 이 세션을 이용할 수 있는 thyleaf가 적용되는 것이다.
@@ -91,8 +91,8 @@ public class UserController {
 
     @PostMapping("/dosave")
     public ModelAndView save(@RequestParam("email") String email,
-                       @RequestParam("password") String password,
-                       @RequestParam("username") String name, Model model) {
+                             @RequestParam("password") String password,
+                             @RequestParam("username") String name, Model model) {
         UserDto findUser = userService.findByEmail(email);
         if (findUser == null) {
             UserDto NewUser = new UserDto(email, password, name);
@@ -145,7 +145,7 @@ public class UserController {
     //회원 정보 변경 시 메서드
     @PostMapping("/update")
     public ModelAndView update(@RequestParam("email") String email,
-                         @RequestParam("userName") String name, HttpSession session) {
+                               @RequestParam("userName") String name, HttpSession session) {
         UserDto sessionUser = getSessionUser();
         log.info("변경 전 정보 " + sessionUser.getEmail() + sessionUser.getName());
         UserDto updateDto = userService.update(sessionUser, email, name);
@@ -173,10 +173,10 @@ public class UserController {
     // 비밀번호 변경 메서드
     @PostMapping("/passwordUpdate")
     public ModelAndView passwordChange(@RequestParam("email") String email,
-                                 @RequestParam("password") String password,
-                                 @RequestParam("newPassword") String newPassword,
-                                 @RequestParam("confirmPassword") String confirmPassword,
-                                 HttpSession session) {
+                                       @RequestParam("password") String password,
+                                       @RequestParam("newPassword") String newPassword,
+                                       @RequestParam("confirmPassword") String confirmPassword,
+                                       HttpSession session) {
         UserDto sessionUser = getSessionUser();
         log.info("컨트롤러 호출 완료");
         log.info(sessionUser.getPassword(), password, email, newPassword, confirmPassword);
