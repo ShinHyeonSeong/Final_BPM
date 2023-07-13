@@ -244,13 +244,11 @@ public class ProjectController {
                                   @PathVariable("recvUser") String recvUuid,
                                   @PathVariable("project") Long projectId,
                                   @PathVariable("acceptable") boolean acceptable) {
-        log.info("전달 완료, " + sendUuid + recvUuid + projectId + acceptable);
         projectSerivce.submitInvite(sendUuid, recvUuid, projectId, acceptable);
         return modelAndView("redirect:/project/inviteList");
     }
 
 
-    /* - - - - - - onlyReadPage 접근 - - - - - - */
 
 }
 
