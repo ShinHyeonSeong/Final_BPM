@@ -54,10 +54,8 @@ public class UserService {
         }
         UserEntity loginUser = findUser.get();
         if (loginUser.getEmail().equals(email) && loginUser.getPassword().equals(password)) {
-            log.info("이메일 && 패스워드 일치 로그인 성공 ");
             return UserDto.toUserDto(loginUser);
         } else {
-            log.info("로그인 실패 -> 존재하지 않는 이뭬일 패스워드 (서비스 동작)");
             return null;
         }
     }
@@ -67,10 +65,8 @@ public class UserService {
         Optional<UserEntity> findId = userRepository.findById(id);
         if (findId.isPresent()) {
             UserEntity userEntity = findId.get();
-            log.info(userEntity.getEmail() + "의 아이디를 찾았습니다(서비스 동작)");
             return UserDto.toUserDto(userEntity);
         } else {
-            log.info("찾으신 결과가 없습니다 (서비스 동작)");
             return null;
         }
     }
