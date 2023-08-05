@@ -18,13 +18,13 @@ import java.util.Map;
 @Service
 public class CalendarService {
     @Autowired
-    private HeadRepository headRepository;
+    HeadRepository headRepository;
 
     @Autowired
-    private DetailRepository detailRepository;
+    DetailRepository detailRepository;
 
     @Autowired
-    private WorkRepository workRepository;
+    WorkRepository workRepository;
 
     public List<Map<String, Object>> getEventList(Long projectId) {
         List<HeadEntity> headEntityList = headRepository.findAllByProjectIdToHead_ProjectId(projectId);
@@ -39,31 +39,31 @@ public class CalendarService {
             event.put("start", simpleDateFormat.format(headEntity.getStartDay()));
             event.put("title", headEntity.getTitle());
             event.put("end", simpleDateFormat.format(headEntity.getEndDay()));
-            event.put("color", "#97C1A9");
+            event.put("color","#97C1A9");
             event.put("textColor", "#000000");
             eventList.add(event);
         }
 
         List<DetailEntity> detailEntityList = detailRepository.findAllByProjectIdToDetail_ProjectId(projectId);
 
-        for (DetailEntity detailEntity : detailEntityList) {
+        for (DetailEntity detailEntity: detailEntityList) {
             event = new HashMap<String, Object>();
             event.put("start", simpleDateFormat.format(detailEntity.getStartDay()));
             event.put("title", detailEntity.getTitle());
             event.put("end", simpleDateFormat.format(detailEntity.getEndDay()));
-            event.put("color", "#CCE2CB");
+            event.put("color","#CCE2CB");
             event.put("textColor", "#000000");
             eventList.add(event);
         }
 
         List<WorkEntity> workEntityList = workRepository.findAllByProjectIdToWork_ProjectId(projectId);
 
-        for (WorkEntity workEntity : workEntityList) {
+        for (WorkEntity workEntity: workEntityList) {
             event = new HashMap<String, Object>();
             event.put("start", simpleDateFormat.format(workEntity.getStartDay()));
             event.put("title", workEntity.getTitle());
             event.put("end", simpleDateFormat.format(workEntity.getEndDay()));
-            event.put("color", "#8FCACA");
+            event.put("color","#8FCACA");
             event.put("textColor", "#000000");
             eventList.add(event);
         }
