@@ -4,7 +4,10 @@ import com.example.bpm.dto.UserDto;
 import javax.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "user_info")
+@NoArgsConstructor
 public class UserEntity {
     @Id
     @Column(name = "uuid")
@@ -53,7 +57,7 @@ public class UserEntity {
     private List<MessageEntity> MessageEntityList2  = new ArrayList<>();
 
 
-    public static UserEntity toUserEntity(UserDto userDto) {
+    public UserEntity toUserEntity(UserDto userDto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUuid(String.valueOf(userDto.getUuid()));
         userEntity.setEmail(userDto.getEmail());

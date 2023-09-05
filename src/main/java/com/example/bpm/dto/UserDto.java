@@ -25,7 +25,7 @@ public class UserDto {
 
 
 
-    public static UserDto toUserDto(UserEntity userEntity) {
+    public UserDto toUserDto(UserEntity userEntity) {
         UserDto userDto = new UserDto();
         userDto.setUuid(userEntity.getUuid());
         userDto.setEmail(userEntity.getEmail());

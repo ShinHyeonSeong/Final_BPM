@@ -139,6 +139,7 @@ public class ProjectDetailSerivce {
         log.info("user_work table insert method");
         WorkEntity workEntity = WorkEntity.toWorkEntity(workDto);
         UserWorkEntity userWorkEntity = new UserWorkEntity();
+
         for (String uuid : chargeUsers) {
             Optional<UserEntity> userEntity = userRepository.findById(uuid);
             userWorkEntity = UserWorkEntity.toUserWorkEntity(workEntity, userEntity.get());
