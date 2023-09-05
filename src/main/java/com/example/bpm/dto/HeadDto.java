@@ -30,7 +30,7 @@ public class HeadDto {
 
     private ProjectEntity projectIdToHead;
 
-    public static HeadDto toHeadDto(HeadEntity headEntity) {
+    public HeadDto toHeadDto(HeadEntity headEntity) {
         HeadDto headDto = new HeadDto();
         headDto.setHeadId(headEntity.getHeadId());
         headDto.setTitle(headEntity.getTitle());
