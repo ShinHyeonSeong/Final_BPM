@@ -57,7 +57,7 @@ public class UserEntity {
     private List<MessageEntity> MessageEntityList2  = new ArrayList<>();
 
 
-    public UserEntity toUserEntity(UserDto userDto) {
+    public static UserEntity toUserEntity(UserDto userDto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setUuid(String.valueOf(userDto.getUuid()));
         userEntity.setEmail(userDto.getEmail());
