@@ -459,10 +459,11 @@ public class ProjectDetailController {
 
         WorkDto workDto = projectDetailSerivce.selectWork(workId);
         UserDto nowUser = getSessionUser();
+        UserEntity userEntity = new UserEntity();
         WorkCommentDto workCommentDto = new WorkCommentDto();
         workCommentDto.setComment(comment);
         workCommentDto.setWorkIdToComment(WorkEntity.toWorkEntity(workDto));
-        workCommentDto.setUserIdToComment(UserEntity.toUserEntity(nowUser));
+        workCommentDto.setUserIdToComment(userEntity.toUserEntity(nowUser));
 
         List<WorkCommentDto> list = projectDetailSerivce.plusComment(workCommentDto, workId);
         model.addAttribute("commentList", list);

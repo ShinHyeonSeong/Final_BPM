@@ -4,7 +4,10 @@ import com.example.bpm.dto.UserDto;
 import javax.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "user_info")
+@NoArgsConstructor
 public class UserEntity {
     @Id
     @Column(name = "uuid")
